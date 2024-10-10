@@ -1,4 +1,4 @@
-package dev.TradeFlow.RapiPay.walletManagement.entities;
+package dev.TradeFlow.RapiPay.WalletManagement.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

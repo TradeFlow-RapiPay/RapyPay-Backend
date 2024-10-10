@@ -1,5 +1,7 @@
-package dev.TradeFlow.RapiPay.walletManagement.entities;
+package dev.TradeFlow.RapiPay.WalletManagement.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import dev.TradeFlow.RapiPay.Shared.entities.ObjectIdSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +15,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Bank {
     @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId id;
 
     private String bankName;
-
-    private Float TEA;
-
-    private Float TCEA;
-
+    private Float tea;
+    private Float tcea;
     private String additionalInfo;
 }
