@@ -1,7 +1,7 @@
 package dev.TradeFlow.RapiPay.Iam.entities;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import dev.TradeFlow.RapiPay.Iam.deserializers.RoleDeserializer;
+import dev.TradeFlow.RapiPay.Shared.entities.RoleDeserializer;
 import dev.TradeFlow.RapiPay.Iam.valueobjects.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Data;

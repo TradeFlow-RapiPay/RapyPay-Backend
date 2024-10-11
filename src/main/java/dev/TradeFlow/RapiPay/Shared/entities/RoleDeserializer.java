@@ -1,4 +1,4 @@
-package dev.TradeFlow.RapiPay.Iam.deserializers;
+package dev.TradeFlow.RapiPay.Shared.entities;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
