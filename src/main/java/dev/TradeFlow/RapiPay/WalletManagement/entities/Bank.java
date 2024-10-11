@@ -19,7 +19,10 @@ public class Bank {
     private ObjectId id;
 
     private String bankName;
+
     private Float tea;
+
     private Float tcea;
+
     private String additionalInfo;
 }
