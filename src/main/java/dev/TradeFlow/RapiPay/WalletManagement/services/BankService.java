@@ -31,8 +31,14 @@ public class BankService {
         return bankRepository.insert(bank);
     }
 
-    public Bank updateBank(Bank bank) {
-        return bankRepository.save(bank);
+    public Optional<Bank> updateBank(ObjectId id, Bank bank) {
+        Optional<Bank> existingBank = bankRepository.findBankById(id);
+        if (existingBank.isPresent()) {
+            bank.setId(id);
+            return Optional.of(bankRepository.save(bank));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public void deleteBank(ObjectId id) {

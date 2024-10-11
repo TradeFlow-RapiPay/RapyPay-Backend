@@ -34,10 +34,11 @@ public class BankController {
         return new ResponseEntity<>(insertedBank, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Bank> updateBank(@RequestBody Bank bank) {
-        Bank updatedBank = bankService.updateBank(bank);
-        return new ResponseEntity<>(updatedBank, HttpStatus.OK);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Bank> updateBank(@PathVariable ObjectId id, @RequestBody Bank bank) {
+        Optional<Bank> updatedBank = bankService.updateBank(id, bank);
+        return updatedBank.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/delete/{id}")
