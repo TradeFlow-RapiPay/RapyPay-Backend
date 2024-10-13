@@ -43,4 +43,8 @@ public class BillService {
     public void deleteBill(ObjectId id) {
         billRepository.deleteById(id);
     }
+
+    public List<Bill> getBillsByUserId(ObjectId userId) {
+        return billRepository.findBillsByUserId(userId);
+    }
 }

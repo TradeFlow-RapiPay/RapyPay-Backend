@@ -44,4 +44,8 @@ public class WalletService {
             return walletRepository.save(wallet);
         });
     }
+
+    public List<Wallet> getWalletsByUserId(ObjectId userId) {
+        return walletRepository.findWalletsByUserId(userId);
+    }
 }

@@ -53,4 +53,9 @@ public class WalletController {
         return updatedWallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Wallet>> getWalletsByUserId(@PathVariable ObjectId userId) {
+        List<Wallet> wallets = walletService.getWalletsByUserId(userId);
+        return new ResponseEntity<>(wallets, HttpStatus.OK);
+    }
 }

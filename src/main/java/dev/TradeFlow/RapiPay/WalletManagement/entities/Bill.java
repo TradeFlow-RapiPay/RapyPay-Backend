@@ -30,4 +30,6 @@ public class Bill {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date dueDate;
+
+    private ObjectId userId;
 }

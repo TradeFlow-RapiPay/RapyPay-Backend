@@ -44,6 +44,8 @@ public class Wallet {
     private float totalDiscount;
     private float totalNetValue;
 
+    private ObjectId userId;
+
     public void applyDiscount() {
         totalDiscount = 0.0f;
         totalNetValue = 0.0f;

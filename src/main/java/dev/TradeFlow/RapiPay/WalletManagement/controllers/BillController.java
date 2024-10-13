@@ -46,4 +46,9 @@ public class BillController {
         billService.deleteBill(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Bill>> getBillsByUserId(@PathVariable ObjectId userId) {
+        List<Bill> bills = billService.getBillsByUserId(userId);
+        return new ResponseEntity<>(bills, HttpStatus.OK);
+    }
 }

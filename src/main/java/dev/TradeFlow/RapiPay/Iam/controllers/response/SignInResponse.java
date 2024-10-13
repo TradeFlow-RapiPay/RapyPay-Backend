@@ -1,6 +1,4 @@
 package dev.TradeFlow.RapiPay.Iam.controllers.response;
 
-import org.bson.types.ObjectId;
-
-public record SignInResponse(ObjectId userId, String username, String token) {
+public record SignInResponse(String userId, String username, String token) {
 }
