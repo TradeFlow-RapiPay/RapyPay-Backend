@@ -31,5 +31,8 @@ public class Bill {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date dueDate;
 
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    private ObjectId walletId; // Add this line
+
     private ObjectId userId;
 }

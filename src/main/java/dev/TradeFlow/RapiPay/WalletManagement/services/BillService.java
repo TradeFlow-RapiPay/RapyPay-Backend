@@ -16,6 +16,9 @@ public class BillService {
     private BillRepository billRepository;
 
     @Autowired
+    private WalletService walletService;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     public List<Bill> getAllBills() {
@@ -26,8 +29,14 @@ public class BillService {
         return billRepository.findBillById(id);
     }
 
-    public Bill insertBill(Bill bill) {
-        return billRepository.insert(bill);
+    public List<Bill> getBillsByWalletId(ObjectId walletId) {
+        return billRepository.findBillsByWalletId(walletId);
+    }
+
+    public Bill insertBill(ObjectId walletId, Bill bill) {
+        Bill savedBill = billRepository.save(bill);
+        walletService.addBillToWallet(walletId, savedBill.getId());
+        return savedBill;
     }
 
     public Optional<Bill> updateBill(ObjectId id, Bill bill) {

@@ -1,18 +1,14 @@
 package dev.TradeFlow.RapiPay.WalletManagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import dev.TradeFlow.RapiPay.Shared.entities.ObjectIdSerializer;
-import dev.TradeFlow.RapiPay.Shared.entities.BankDeserializer;
-import dev.TradeFlow.RapiPay.Shared.entities.BillDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.Date;
 import java.util.List;
@@ -28,13 +24,10 @@ public class Wallet {
 
     private String walletName;
 
-    @DocumentReference
-    @JsonDeserialize(using = BankDeserializer.class)
-    private Bank bank;
+    @JsonSerialize(using = ObjectIdSerializer.class)
+    private ObjectId bank;
 
-    @DocumentReference
-    @JsonDeserialize(contentUsing = BillDeserializer.class)
-    private List<Bill> billsList;
+    private List<ObjectId> billsList; // Change this to List<ObjectId>
 
     private String description;
 
@@ -50,7 +43,9 @@ public class Wallet {
         totalDiscount = 0.0f;
         totalNetValue = 0.0f;
 
-        for (Bill bill : billsList) {
+        // Assuming you have a method to fetch Bill objects by their ObjectId
+        for (ObjectId billId : billsList) {
+            Bill bill = fetchBillById(billId);
             float personalizedTea = calculatePersonalizedTea(bill);
             float discount = calculateDiscount(bill, personalizedTea);
             totalDiscount += discount;
@@ -59,7 +54,7 @@ public class Wallet {
     }
 
     private float calculatePersonalizedTea(Bill bill) {
-        float bankTea = bank.getTea();
+        float bankTea = fetchBankById(bank).getTea(); // Assuming you have a method to fetch Bank by its ObjectId
         long days = (closingDate.getTime() - bill.getEmissionDate().getTime()) / (1000 * 60 * 60 * 24);
         return bankTea * (days / 360.0f);
     }
@@ -77,5 +72,16 @@ public class Wallet {
 
     public void calculateAndUpdateData() {
         applyDiscount();
+    }
+
+    // Placeholder methods for fetching Bill and Bank objects by their ObjectId
+    private Bill fetchBillById(ObjectId billId) {
+        // Implement this method to fetch Bill by its ObjectId
+        return new Bill();
+    }
+
+    private Bank fetchBankById(ObjectId bankId) {
+        // Implement this method to fetch Bank by its ObjectId
+        return new Bank();
     }
 }

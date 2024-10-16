@@ -28,9 +28,15 @@ public class BillController {
         return new ResponseEntity<>(billService.getBillById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/insert")
-    public ResponseEntity<Bill> insertBill(@RequestBody Bill bill) {
-        Bill insertedBill = billService.insertBill(bill);
+    @GetMapping("/wallet/{walletId}")
+    public ResponseEntity<List<Bill>> getBillsByWalletId(@PathVariable ObjectId walletId) {
+        List<Bill> bills = billService.getBillsByWalletId(walletId);
+        return new ResponseEntity<>(bills, HttpStatus.OK);
+    }
+
+    @PostMapping("/insert/{walletId}")
+    public ResponseEntity<Bill> insertBill(@PathVariable ObjectId walletId, @RequestBody Bill bill) {
+        Bill insertedBill = billService.insertBill(walletId, bill);
         return new ResponseEntity<>(insertedBill, HttpStatus.CREATED);
     }
 

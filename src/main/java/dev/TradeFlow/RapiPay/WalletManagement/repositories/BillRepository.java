@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface BillRepository extends MongoRepository<Bill, ObjectId> {
     Optional<Bill> findBillById(ObjectId id);
     List<Bill> findBillsByUserId(ObjectId userId);
+    List<Bill> findBillsByWalletId(ObjectId walletId);
 }
