@@ -1,6 +1,6 @@
 package dev.TradeFlow.RapiPay.WalletManagement.valueobjects;
 
-public enum BillType {
+public enum BillTypes {
     TYPE_BILL,
     TYPE_LETTER
 }
