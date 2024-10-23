@@ -28,17 +28,26 @@ public class WalletController {
         return new ResponseEntity<>(walletService.getWalletById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/insert")
-    public ResponseEntity<Wallet> insertWallet(@RequestBody Wallet wallet) {
-        Wallet insertedWallet = walletService.insertWallet(wallet);
-        return new ResponseEntity<>(insertedWallet, HttpStatus.CREATED);
+    @PostMapping("/insert/{userId}")
+    public ResponseEntity<Wallet> insertWallet(@PathVariable ObjectId userId, @RequestBody Wallet wallet) {
+        try {
+            wallet.setUserId(userId);
+            Wallet insertedWallet = walletService.insertWallet(wallet);
+            return new ResponseEntity<>(insertedWallet, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Wallet> updateWallet(@PathVariable ObjectId id, @RequestBody Wallet wallet) {
-        Optional<Wallet> updatedWallet = walletService.updateWallet(id, wallet);
-        return updatedWallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        try {
+            Optional<Wallet> updatedWallet = walletService.updateWallet(id, wallet);
+            return updatedWallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
@@ -53,6 +62,7 @@ public class WalletController {
         return updatedWallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Wallet>> getWalletsByUserId(@PathVariable ObjectId userId) {
         List<Wallet> wallets = walletService.getWalletsByUserId(userId);

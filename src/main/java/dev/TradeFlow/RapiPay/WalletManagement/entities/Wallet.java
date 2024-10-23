@@ -27,7 +27,7 @@ public class Wallet {
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId bank;
 
-    private List<ObjectId> billsList; // Change this to List<ObjectId>
+    private List<ObjectId> billsList;
 
     private String description;
 
@@ -36,7 +36,9 @@ public class Wallet {
 
     private float totalDiscount;
     private float totalNetValue;
+    private float tcea;
 
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId userId;
 
     public void applyDiscount() {

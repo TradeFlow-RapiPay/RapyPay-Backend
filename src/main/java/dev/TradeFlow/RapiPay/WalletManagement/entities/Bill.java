@@ -1,3 +1,4 @@
+// src/main/java/dev/TradeFlow/RapiPay/WalletManagement/entities/Bill.java
 package dev.TradeFlow.RapiPay.WalletManagement.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,7 +33,8 @@ public class Bill {
     private Date dueDate;
 
     @JsonSerialize(using = ObjectIdSerializer.class)
-    private ObjectId walletId; // Add this line
+    private ObjectId walletId;
 
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId userId;
 }
