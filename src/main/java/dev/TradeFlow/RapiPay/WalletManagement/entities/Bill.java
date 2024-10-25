@@ -4,6 +4,7 @@ package dev.TradeFlow.RapiPay.WalletManagement.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import dev.TradeFlow.RapiPay.Shared.entities.ObjectIdSerializer;
+import dev.TradeFlow.RapiPay.WalletManagement.valueobjects.BillTypes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,5 +40,5 @@ public class Bill {
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId userId;
 
-    private List<BillType> billTypes;
+    private BillTypes billType;
 }

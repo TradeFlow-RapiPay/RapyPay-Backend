@@ -1,6 +1,7 @@
 package dev.TradeFlow.RapiPay.WalletManagement.services;
 
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Bill;
+import dev.TradeFlow.RapiPay.WalletManagement.valueobjects.BillTypes;
 import dev.TradeFlow.RapiPay.WalletManagement.repositories.BillRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class BillService {
     }
 
     public Bill insertBill(ObjectId walletId, Bill bill) {
+        if (!billRepository.isValidBillType(bill.getBillType())) {
+            throw new IllegalArgumentException("Invalid bill type");
+        }
         Bill savedBill = billRepository.save(bill);
         walletService.addBillToWallet(walletId, savedBill.getId());
         return savedBill;

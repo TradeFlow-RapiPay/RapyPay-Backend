@@ -3,6 +3,7 @@ package dev.TradeFlow.RapiPay.WalletManagement.entities;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import dev.TradeFlow.RapiPay.Shared.entities.ObjectIdSerializer;
+import dev.TradeFlow.RapiPay.WalletManagement.valueobjects.MoneyTypes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,8 @@ public class Wallet {
     private float totalDiscount;
     private float totalNetValue;
     private float tcea;
+
+    private MoneyTypes moneyType;
 
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId userId;

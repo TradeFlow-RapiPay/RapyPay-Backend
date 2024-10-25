@@ -20,13 +20,11 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final MongoTemplate mongoTemplate;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository, MongoTemplate mongoTemplate, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.mongoTemplate = mongoTemplate;
         this.passwordEncoder = passwordEncoder;
     }
 

@@ -3,6 +3,7 @@ package dev.TradeFlow.RapiPay.WalletManagement.services;
 import dev.TradeFlow.RapiPay.Iam.repositories.UserRepository;
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Wallet;
 import dev.TradeFlow.RapiPay.WalletManagement.repositories.WalletRepository;
+import dev.TradeFlow.RapiPay.WalletManagement.valueobjects.MoneyTypes;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class WalletService {
 
     public Wallet insertWallet(Wallet wallet) {
         if (userRepository.findById(wallet.getUserId()).isPresent()) {
+            if (!walletRepository.isValidMoneyType(wallet.getMoneyType())) {
+                throw new IllegalArgumentException("Invalid MoneyType");
+            }
             return walletRepository.save(wallet);
         } else {
             throw new IllegalArgumentException("User does not exist");
