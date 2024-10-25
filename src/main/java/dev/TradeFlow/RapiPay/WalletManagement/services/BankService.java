@@ -24,7 +24,7 @@ public class BankService {
     }
 
     public Optional<Bank> getBankById(ObjectId id) {
-        return bankRepository.findBankById(id);
+        return bankRepository.findById(id);
     }
 
     public Bank insertBank(Bank bank) {

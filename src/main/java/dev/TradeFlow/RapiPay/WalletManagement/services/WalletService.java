@@ -1,6 +1,8 @@
 package dev.TradeFlow.RapiPay.WalletManagement.services;
 
 import dev.TradeFlow.RapiPay.Iam.repositories.UserRepository;
+import dev.TradeFlow.RapiPay.WalletManagement.entities.Bank;
+import dev.TradeFlow.RapiPay.WalletManagement.entities.Bill;
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Wallet;
 import dev.TradeFlow.RapiPay.WalletManagement.repositories.WalletRepository;
 import dev.TradeFlow.RapiPay.WalletManagement.valueobjects.MoneyTypes;
@@ -15,11 +17,18 @@ import java.util.Optional;
 @Service
 public class WalletService {
 
-    @Autowired
-    private WalletRepository walletRepository;
+    private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
+    private final BankService bankService;
+    private final BillService billService;
 
     @Autowired
-    private UserRepository userRepository;
+    public WalletService(WalletRepository walletRepository, UserRepository userRepository, BankService bankService, BillService billService) {
+        this.walletRepository = walletRepository;
+        this.userRepository = userRepository;
+        this.bankService = bankService;
+        this.billService = billService;
+    }
 
     public List<Wallet> getAllWallets() {
         return walletRepository.findAll();
@@ -67,14 +76,44 @@ public class WalletService {
         walletRepository.deleteById(id);
     }
 
-    public Optional<Wallet> calculateAndUpdateWallet(ObjectId id) {
-        return walletRepository.findById(id).map(wallet -> {
-            wallet.calculateAndUpdateData();
-            return walletRepository.save(wallet);
-        });
-    }
-
     public List<Wallet> getWalletsByUserId(ObjectId userId) {
         return walletRepository.findWalletsByUserId(userId);
+    }
+
+    public void calculateAndUpdateData(ObjectId walletId) {
+        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+        applyDiscount(wallet);
+        walletRepository.save(wallet);
+    }
+
+    private void applyDiscount(Wallet wallet) {
+        wallet.setTotalDiscount(0.0f);
+        wallet.setTotalNetValue(0.0f);
+
+        for (ObjectId billId : wallet.getBillsList()) {
+            Bill bill = billService.getBillById(billId).orElseThrow(() -> new IllegalArgumentException("Bill not found"));
+            float personalizedTea = calculatePersonalizedTea(wallet, bill);
+            float discount = calculateDiscount(wallet, bill, personalizedTea);
+            wallet.setTotalDiscount(wallet.getTotalDiscount() + discount);
+            wallet.setTotalNetValue(wallet.getTotalNetValue() + bill.getNetValue());
+        }
+    }
+
+    private float calculatePersonalizedTea(Wallet wallet, Bill bill) {
+        Bank bankEntity = bankService.getBankById(wallet.getBank()).orElseThrow(() -> new IllegalArgumentException("Bank or TEA is null"));
+        float bankTea = bankEntity.getTea();
+        long days = (wallet.getClosingDate().getTime() - bill.getEmissionDate().getTime()) / (1000 * 60 * 60 * 24);
+        return bankTea * (days / 360.0f);
+    }
+
+    private float calculateDiscount(Wallet wallet, Bill bill, float personalizedTea) {
+        float discount = 0.0f;
+        long days = (wallet.getClosingDate().getTime() - bill.getDueDate().getTime()) / (1000 * 60 * 60 * 24);
+
+        if (days > 0) {
+            discount = bill.getNetValue() * personalizedTea * (days / 360.0f);
+        }
+
+        return discount;
     }
 }

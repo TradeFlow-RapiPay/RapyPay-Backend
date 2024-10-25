@@ -15,8 +15,12 @@ import java.util.Optional;
 @RequestMapping("/api/v1/bill")
 public class BillController {
 
+    private final BillService billService;
+
     @Autowired
-    private BillService billService;
+    public BillController(BillService billService) {
+        this.billService = billService;
+    }
 
     @GetMapping("/findAll")
     public ResponseEntity<List<Bill>> getAllBills() {
@@ -24,8 +28,8 @@ public class BillController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Bill>> getBillById(@PathVariable ObjectId id) {
-        return new ResponseEntity<>(billService.getBillById(id), HttpStatus.OK);
+    public Optional<Bill> getBillById(@PathVariable ObjectId id) {
+        return billService.getBillById(id);
     }
 
     @GetMapping("/wallet/{walletId}")

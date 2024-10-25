@@ -13,7 +13,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
-import java.util.List;
 
 @Document(collection = "bills")
 @Data
@@ -26,7 +25,11 @@ public class Bill {
 
     private String billNumber;
 
-    private Float netValue;
+    private String addressee;
+
+    private BillTypes billType;
+
+    private float netValue;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date emissionDate;
@@ -39,6 +42,4 @@ public class Bill {
 
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId userId;
-
-    private BillTypes billType;
 }

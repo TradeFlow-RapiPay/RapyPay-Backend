@@ -56,11 +56,9 @@ public class WalletController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/calculateAndUpdate/{id}")
-    public ResponseEntity<Wallet> calculateAndUpdateWallet(@PathVariable ObjectId id) {
-        Optional<Wallet> updatedWallet = walletService.calculateAndUpdateWallet(id);
-        return updatedWallet.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @PutMapping("/calculate/{id}")
+    public void calculateAndUpdateData(@PathVariable ObjectId id) {
+        walletService.calculateAndUpdateData(id);
     }
 
     @GetMapping("/user/{userId}")

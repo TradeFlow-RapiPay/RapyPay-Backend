@@ -1,3 +1,4 @@
+// src/main/java/dev/TradeFlow/RapiPay/WalletManagement/entities/Bank.java
 package dev.TradeFlow.RapiPay.WalletManagement.entities;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -20,9 +21,9 @@ public class Bank {
 
     private String bankName;
 
-    private Float tea;
+    private float tea;
 
-    private Float tcea;
+    private float tcea;
 
     private String additionalInfo;
 }
