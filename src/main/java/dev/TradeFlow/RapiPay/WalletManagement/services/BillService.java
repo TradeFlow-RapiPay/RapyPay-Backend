@@ -2,6 +2,7 @@ package dev.TradeFlow.RapiPay.WalletManagement.services;
 
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Bill;
 import dev.TradeFlow.RapiPay.WalletManagement.repositories.BillRepository;
+import dev.TradeFlow.RapiPay.WalletManagement.repositories.WalletRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ import java.util.Optional;
 public class BillService {
 
     private final BillRepository billRepository;
+    private final WalletRepository walletRepository;
 
     @Autowired
-    public BillService(BillRepository billRepository) {
+    public BillService(BillRepository billRepository, WalletRepository walletRepository) {
         this.billRepository = billRepository;
+        this.walletRepository = walletRepository;
     }
 
     public List<Bill> getAllBills() {
@@ -36,7 +39,15 @@ public class BillService {
             throw new IllegalArgumentException("Invalid bill type");
         }
         bill.setWalletId(walletId);
-        return billRepository.save(bill);
+        Bill savedBill = billRepository.save(bill);
+
+        // Add the bill ID to the wallet's billsList
+        walletRepository.findById(walletId).ifPresent(wallet -> {
+            wallet.getBillsList().add(savedBill.getId());
+            walletRepository.save(wallet);
+        });
+
+        return savedBill;
     }
 
     public Optional<Bill> updateBill(ObjectId id, Bill bill) {

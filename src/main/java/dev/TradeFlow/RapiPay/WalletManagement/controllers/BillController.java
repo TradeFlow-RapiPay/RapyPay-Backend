@@ -39,9 +39,8 @@ public class BillController {
     }
 
     @PostMapping("/insert/{walletId}")
-    public ResponseEntity<Bill> insertBill(@PathVariable ObjectId walletId, @RequestBody Bill bill) {
-        Bill insertedBill = billService.insertBill(walletId, bill);
-        return new ResponseEntity<>(insertedBill, HttpStatus.CREATED);
+    public Bill insertBill(@PathVariable ObjectId walletId, @RequestBody Bill bill) {
+        return billService.insertBill(walletId, bill);
     }
 
     @PutMapping("/update/{id}")

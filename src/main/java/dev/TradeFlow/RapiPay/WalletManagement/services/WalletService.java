@@ -5,7 +5,6 @@ import dev.TradeFlow.RapiPay.WalletManagement.entities.Bank;
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Bill;
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Wallet;
 import dev.TradeFlow.RapiPay.WalletManagement.repositories.WalletRepository;
-import dev.TradeFlow.RapiPay.WalletManagement.valueobjects.MoneyTypes;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,6 +96,8 @@ public class WalletService {
             wallet.setTotalDiscount(wallet.getTotalDiscount() + discount);
             wallet.setTotalNetValue(wallet.getTotalNetValue() + bill.getNetValue());
         }
+
+        wallet.setTcea(calculateTcea(wallet));
     }
 
     private float calculatePersonalizedTea(Wallet wallet, Bill bill) {
@@ -115,5 +116,11 @@ public class WalletService {
         }
 
         return discount;
+    }
+
+    private float calculateTcea(Wallet wallet) {
+        // Implement the logic to calculate TCEA based on wallet's data
+        // This is a placeholder implementation
+        return wallet.getTotalDiscount() / wallet.getTotalNetValue() * 100;
     }
 }
