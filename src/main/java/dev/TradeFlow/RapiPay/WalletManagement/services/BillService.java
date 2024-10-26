@@ -52,7 +52,17 @@ public class BillService {
     }
 
     public void deleteBill(ObjectId id) {
-        billRepository.deleteById(id);
+        Optional<Bill> billOpt = billRepository.findById(id);
+        if (billOpt.isPresent()) {
+            Bill bill = billOpt.get();
+            ObjectId walletId = bill.getWalletId();
+            billRepository.deleteById(id);
+
+            walletRepository.findById(walletId).ifPresent(wallet -> {
+                wallet.getBillsList().remove(id);
+                walletRepository.save(wallet);
+            });
+        }
     }
 
     public List<Bill> getBillsByUserId(ObjectId userId) {
