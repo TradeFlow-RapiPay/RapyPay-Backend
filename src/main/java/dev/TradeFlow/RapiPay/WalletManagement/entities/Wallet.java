@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class Wallet {
     private ObjectId bank;
 
     @JsonSerialize(contentUsing = ObjectIdSerializer.class)
-    private List<ObjectId> billsList;
+    private List<ObjectId> billsList = new ArrayList<>();
 
     private String description;
 
@@ -46,4 +47,8 @@ public class Wallet {
 
     @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId userId;
+
+    public void addBill(ObjectId billId) {
+        billsList.add(billId);
+    }
 }

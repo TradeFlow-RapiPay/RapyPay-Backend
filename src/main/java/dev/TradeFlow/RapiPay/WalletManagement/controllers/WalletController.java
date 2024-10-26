@@ -29,9 +29,9 @@ public class WalletController {
     }
 
     @PostMapping("/insert/{userId}")
-    public ResponseEntity<Wallet> insertWallet(@PathVariable ObjectId userId, @RequestBody Wallet wallet) {
+    public ResponseEntity<Wallet> insertWallet(@PathVariable String userId, @RequestBody Wallet wallet) {
         try {
-            wallet.setUserId(userId);
+            wallet.setUserId(new ObjectId(userId));
             Wallet insertedWallet = walletService.insertWallet(wallet);
             return new ResponseEntity<>(insertedWallet, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

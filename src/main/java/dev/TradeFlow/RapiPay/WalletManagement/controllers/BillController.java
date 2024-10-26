@@ -1,7 +1,9 @@
 package dev.TradeFlow.RapiPay.WalletManagement.controllers;
 
 import dev.TradeFlow.RapiPay.WalletManagement.entities.Bill;
+import dev.TradeFlow.RapiPay.WalletManagement.entities.Wallet;
 import dev.TradeFlow.RapiPay.WalletManagement.services.BillService;
+import dev.TradeFlow.RapiPay.WalletManagement.services.WalletService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,12 @@ import java.util.Optional;
 public class BillController {
 
     private final BillService billService;
+    private final WalletService walletService;
 
     @Autowired
-    public BillController(BillService billService) {
+    public BillController(BillService billService, WalletService walletService) {
         this.billService = billService;
+        this.walletService = walletService;
     }
 
     @GetMapping("/findAll")
@@ -38,9 +42,16 @@ public class BillController {
         return new ResponseEntity<>(bills, HttpStatus.OK);
     }
 
-    @PostMapping("/insert/{walletId}")
-    public Bill insertBill(@PathVariable ObjectId walletId, @RequestBody Bill bill) {
-        return billService.insertBill(walletId, bill);
+    @PostMapping("/insert/{walletId}/{userId}")
+    public ResponseEntity<Bill> insertBill(@PathVariable String walletId, @PathVariable String userId,@RequestBody Bill bill) {
+        try {
+            bill.setWalletId(new ObjectId(walletId));
+            Bill insertedBill = billService.insertBill(new ObjectId(walletId), new ObjectId(userId),bill);
+            walletService.addBillToWallet(insertedBill.getWalletId(), insertedBill.getId());
+            return new ResponseEntity<>(insertedBill, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/update/{id}")

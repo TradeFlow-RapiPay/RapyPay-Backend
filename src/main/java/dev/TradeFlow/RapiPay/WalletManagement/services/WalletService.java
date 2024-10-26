@@ -42,6 +42,7 @@ public class WalletService {
             if (!walletRepository.isValidMoneyType(wallet.getMoneyType())) {
                 throw new IllegalArgumentException("Invalid MoneyType");
             }
+            wallet.setBillsList(new ArrayList<>());
             return walletRepository.save(wallet);
         } else {
             throw new IllegalArgumentException("User does not exist");
@@ -81,6 +82,7 @@ public class WalletService {
 
     public void calculateAndUpdateData(ObjectId walletId) {
         Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new IllegalArgumentException("Wallet not found"));
+        System.out.println("Calculating data for wallet: " + wallet.getBillsList());
         applyDiscount(wallet);
         walletRepository.save(wallet);
     }
@@ -114,7 +116,7 @@ public class WalletService {
         if (days > 0) {
             discount = bill.getNetValue() * personalizedTea * (days / 360.0f);
         }
-
+        System.out.println(discount);
         return discount;
     }
 
