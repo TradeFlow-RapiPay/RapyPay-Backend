@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class WalletService {
@@ -93,31 +95,29 @@ public class WalletService {
 
         for (ObjectId billId : wallet.getBillsList()) {
             Bill bill = billService.getBillById(billId).orElseThrow(() -> new IllegalArgumentException("Bill not found"));
-            float personalizedTea = calculatePersonalizedTea(wallet, bill);
-            float discount = calculateDiscount(wallet, bill, personalizedTea);
-            wallet.setTotalDiscount(wallet.getTotalDiscount() + discount);
-            wallet.setTotalNetValue(wallet.getTotalNetValue() + bill.getNetValue());
+            float valorPresente = calcularValorPresente(bill.getNetValue(), bill.getEmissionDate(), bill.getDueDate(), wallet.getClosingDate(), getTea(wallet));
+            float descuento = bill.getNetValue() - valorPresente;
+            wallet.setTotalDiscount(wallet.getTotalDiscount() + descuento);
+            wallet.setTotalNetValue(wallet.getTotalNetValue() + valorPresente);
         }
 
         wallet.setTcea(calculateTcea(wallet));
     }
 
-    private float calculatePersonalizedTea(Wallet wallet, Bill bill) {
-        Bank bankEntity = bankService.getBankById(wallet.getBank()).orElseThrow(() -> new IllegalArgumentException("Bank or TEA is null"));
-        float bankTea = bankEntity.getTea();
-        long days = (wallet.getClosingDate().getTime() - bill.getEmissionDate().getTime()) / (1000 * 60 * 60 * 24);
-        return bankTea * (days / 360.0f);
+    private float calcularValorPresente(float valorNominal, Date fechaEmision, Date fechaVencimiento, Date fechaCierre, float tea) {
+        // Convertir TEA a tasa efectiva diaria
+        float ted = (float) (Math.pow(1 + tea, 1.0 / 360) - 1);
+
+        // Calcular días entre fecha de cierre y vencimiento
+        long diasAlVencimiento = TimeUnit.DAYS.convert(fechaVencimiento.getTime() - fechaCierre.getTime(), TimeUnit.MILLISECONDS);
+
+        // Calcular valor presente
+        return (float) (valorNominal / Math.pow(1 + ted, diasAlVencimiento));
     }
 
-    private float calculateDiscount(Wallet wallet, Bill bill, float personalizedTea) {
-        float discount = 0.0f;
-        long days = (wallet.getClosingDate().getTime() - bill.getDueDate().getTime()) / (1000 * 60 * 60 * 24);
-
-        if (days > 0) {
-            discount = bill.getNetValue() * personalizedTea * (days / 360.0f);
-        }
-        System.out.println(discount);
-        return discount;
+    private float getTea(Wallet wallet) {
+        Bank bankEntity = bankService.getBankById(wallet.getBank()).orElseThrow(() -> new IllegalArgumentException("Bank or TEA is null"));
+        return bankEntity.getTea();
     }
 
     private float calculateTcea(Wallet wallet) {
