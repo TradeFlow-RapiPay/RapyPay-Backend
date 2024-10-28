@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
     public Optional<User> createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         List<Role> roles = new ArrayList<>();
-        roles.add(new Role(Roles.ROLE_USER));
+        roles.add(new Role(user.getRoles().stream().map(role -> Roles.valueOf(role.getName().name())).findFirst().orElse(null)));
         user.setRoles(roles);
         return Optional.of(userRepository.insert(user));
     }

@@ -1,6 +1,8 @@
 package dev.TradeFlow.RapiPay.Iam.controllers;
 
+import dev.TradeFlow.RapiPay.Iam.controllers.resource.UserRequest;
 import dev.TradeFlow.RapiPay.Iam.controllers.response.SignInResponse;
+import dev.TradeFlow.RapiPay.Iam.controllers.transform.SignUpFromResourceToEntity;
 import dev.TradeFlow.RapiPay.Iam.entities.User;
 import dev.TradeFlow.RapiPay.Iam.services.UserService;
 import dev.TradeFlow.RapiPay.Iam.tokenconfig.util.JwtUtil;
@@ -23,7 +25,8 @@ public class UserController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody User user) {
+    public ResponseEntity<User> signUp(@RequestBody UserRequest userRequest) {
+        var user = SignUpFromResourceToEntity.transform(userRequest);
         User existingUser = userService.getUserByUsername(user.getUsername()).orElse(null);
         if (existingUser != null) {
             return ResponseEntity.badRequest().build();
