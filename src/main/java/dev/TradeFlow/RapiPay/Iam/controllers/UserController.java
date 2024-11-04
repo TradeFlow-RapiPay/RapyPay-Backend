@@ -2,6 +2,7 @@ package dev.TradeFlow.RapiPay.Iam.controllers;
 
 import dev.TradeFlow.RapiPay.Iam.controllers.resource.UserRequest;
 import dev.TradeFlow.RapiPay.Iam.controllers.response.SignInResponse;
+import dev.TradeFlow.RapiPay.Iam.controllers.transform.SignInFromEntityToResponse;
 import dev.TradeFlow.RapiPay.Iam.controllers.transform.SignUpFromResourceToEntity;
 import dev.TradeFlow.RapiPay.Iam.entities.User;
 import dev.TradeFlow.RapiPay.Iam.services.UserService;
@@ -48,7 +49,7 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         String token = jwtUtil.generateToken(user.getUsername());
-        SignInResponse response = new SignInResponse(existingUser.getId().toString(), existingUser.getRoles().get(0).getName().toString(), existingUser.getUsername(), token);
+        SignInResponse response = SignInFromEntityToResponse.transform(existingUser, token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
