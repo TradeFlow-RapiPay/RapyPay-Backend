@@ -48,7 +48,7 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         String token = jwtUtil.generateToken(user.getUsername());
-        SignInResponse response = new SignInResponse(existingUser.getId().toString(), existingUser.getUsername(), token);
+        SignInResponse response = new SignInResponse(existingUser.getId().toString(), existingUser.getRoles().get(0).getName().toString(), existingUser.getUsername(), token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
