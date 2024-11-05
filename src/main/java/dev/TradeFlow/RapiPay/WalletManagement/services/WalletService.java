@@ -41,24 +41,17 @@ public class WalletService {
 
     public Wallet insertWallet(Wallet wallet) {
         if (userRepository.findById(wallet.getUserId()).isPresent()) {
-            if (!walletRepository.isValidMoneyType(wallet.getMoneyType())) {
-                throw new IllegalArgumentException("Invalid MoneyType");
-            }
-            wallet.setBillsList(new ArrayList<>());
             return walletRepository.save(wallet);
         } else {
-            throw new IllegalArgumentException("User does not exist");
+            throw new IllegalArgumentException("User not found");
         }
     }
 
     public Optional<Wallet> updateWallet(ObjectId id, Wallet wallet) {
         if (userRepository.findById(wallet.getUserId()).isPresent()) {
-            return walletRepository.findById(id).map(existingWallet -> {
-                wallet.setId(id);
-                return walletRepository.save(wallet);
-            });
+            return Optional.of(walletRepository.save(wallet));
         } else {
-            throw new IllegalArgumentException("User does not exist");
+            throw new IllegalArgumentException("User not found");
         }
     }
 
@@ -66,11 +59,10 @@ public class WalletService {
         Optional<Wallet> walletOpt = walletRepository.findById(walletId);
         if (walletOpt.isPresent()) {
             Wallet wallet = walletOpt.get();
-            if (wallet.getBillsList() == null) {
-                wallet.setBillsList(new ArrayList<>());
-            }
-            wallet.getBillsList().add(billId);
+            wallet.addBill(billId);
             walletRepository.save(wallet);
+        } else {
+            throw new IllegalArgumentException("Wallet not found");
         }
     }
 
@@ -96,8 +88,11 @@ public class WalletService {
         for (ObjectId billId : wallet.getBillsList()) {
             Bill bill = billService.getBillById(billId).orElseThrow(() -> new IllegalArgumentException("Bill not found"));
             float valorPresente = calcularValorPresente(bill.getNetValue(), bill.getEmissionDate(), bill.getDueDate(), wallet.getClosingDate(), getTea(wallet));
-            float descuento = bill.getNetValue() - valorPresente;
-            wallet.setTotalDiscount(wallet.getTotalDiscount() + descuento);
+            float discount = bill.getNetValue() - valorPresente;
+            bill.setDiscount(discount); // Set the discount for each bill
+            billService.updateBill(billId, bill); // Save the updated bill
+
+            wallet.setTotalDiscount(wallet.getTotalDiscount() + discount);
             wallet.setTotalNetValue(wallet.getTotalNetValue() + valorPresente);
         }
 

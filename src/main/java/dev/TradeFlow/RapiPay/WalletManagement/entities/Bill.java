@@ -31,6 +31,8 @@ public class Bill {
 
     private float netValue;
 
+    private float discount;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date emissionDate;
 
